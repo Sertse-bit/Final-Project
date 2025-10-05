@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # Movie Database (Frontend Capstone)
 
 This is a React + Vite + Tailwind project that searches movies using the OMDB API.
@@ -39,3 +40,6 @@ Deploy to Vercel or Netlify and add `VITE_OMDB_API_KEY` as an environment variab
 - Favorites (localStorage)
 - Pagination
 - Trailers via YouTube
+=======
+# Final-Project
+>>>>>>> e38bb984110009746797b6372f50a0dba80778b2
