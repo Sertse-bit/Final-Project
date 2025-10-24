@@ -1,180 +1,185 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import Header from "./components/Header";
-import MovieCard from "./components/MovieCard";
-import MovieGrid from "./components/MovieGrid";
+import MovieList from "./components/MovieList";
 import CategoryTabs from "./components/CategoryTabs";
-import SearchResults from "./components/SearchResults";
 import MovieDetails from "./components/MovieDetails";
-import StatsSection from "./components/StatsSection";
+import AuthModal from "./components/AuthModal";
 
-const VITE_OMDB_API_KEY = import.meta.env.VITE_OMDB_API_KEY;
-const API_KEY = "76bb783b";
+const API_KEY = "368be984";
 
 export default function App() {
   const [searchQuery, setSearchQuery] = useState("");
   const [activeCategory, setActiveCategory] = useState("All");
   const [selectedMovie, setSelectedMovie] = useState(null);
-
   const [movies, setMovies] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
+  const [showAuthModal, setShowAuthModal] = useState(false);
+  const [authMode, setAuthMode] = useState("signin");
+  const [page, setPage] = useState(1);
+  const [hasMore, setHasMore] = useState(true);
 
+  // ✅ Categories (used for both tabs and random homepage load)
   const categories = ["All", "Action", "Drama", "Comedy", "Sci-Fi", "Horror", "Romance", "Adventure"];
 
-  // Search function (by title)
-  const fetchMovies = async (query = "Avengers") => {
+  // ✅ Fetch movies helper
+  const fetchMovies = async (query = "Batman", pageNum = 1, limit = 30) => {
+    if (!hasMore && pageNum > 1) return;
     setLoading(true);
+    setError("");
+
     try {
-      const res = await fetch(`https://www.omdbapi.com/?apikey=${API_KEY}&s=${encodeURIComponent(query)}&type=movie`);
-      const data = await res.json();
-      if (data.Search) {
-        const formatted = data.Search.map((m) => ({
-          id: m.imdbID,
-          title: m.Title,
-          year: m.Year,
-          image: m.Poster !== "N/A" ? m.Poster : "https://via.placeholder.com/300x450?text=No+Image",
-          genre: m.Type || "Movie",
-          rating: "N/A",
-          duration: "—",
-        }));
-        setMovies(formatted);
+      const searchRes = await fetch(
+        `https://www.omdbapi.com/?apikey=${API_KEY}&s=${encodeURIComponent(query)}&type=movie&page=${pageNum}`
+      );
+      const searchData = await searchRes.json();
+
+      if (searchData.Response === "True") {
+        const moviesWithDetails = await Promise.all(
+          searchData.Search.map(async (m) => {
+            const detailRes = await fetch(
+              `https://www.omdbapi.com/?apikey=${API_KEY}&i=${m.imdbID}`
+            );
+            const details = await detailRes.json();
+            return {
+              id: m.imdbID,
+              title: m.Title,
+              year: m.Year,
+              image: m.Poster !== "N/A"
+                ? m.Poster
+                : "https://via.placeholder.com/300x450?text=No+Image",
+              genre: details.Genre || "Movie",
+              rating: details.imdbRating || "N/A",
+              duration: details.Runtime || "—",
+              plot: details.Plot || "",
+            };
+          })
+        );
+
+        // ✅ Limit to 30 movies (for homepage)
+        const limitedMovies = moviesWithDetails.slice(0, limit);
+        setMovies((prev) => (pageNum === 1 ? limitedMovies : [...prev, ...limitedMovies]));
+        setHasMore(searchData.Search.length > 0);
       } else {
-        setMovies([]);
+        if (pageNum === 1) setMovies([]);
+        setHasMore(false);
       }
     } catch (err) {
       console.error(err);
-      setMovies([]);
+      setError("Failed to fetch movies");
+    } finally {
+      setLoading(false);
     }
-    setLoading(false);
   };
 
+  // ✅ On load: choose random category and fetch up to 30 movies
   useEffect(() => {
-    fetchMovies("Avengers");
+    const randomCategory = categories[Math.floor(Math.random() * (categories.length - 1)) + 1]; // skip "All"
+    setMovies([]);
+    setPage(1);
+    setHasMore(true);
+    fetchMovies(randomCategory, 1, 30);
   }, []);
 
-  // When searchQuery changes, fetch results (debounce simple)
+  // ✅ When search query changes
   useEffect(() => {
-    if (!searchQuery) return;
-    const t = setTimeout(() => {
-      fetchMovies(searchQuery);
-    }, 500);
-    return () => clearTimeout(t);
+    if (searchQuery === "") return; // don’t refetch on first load
+    setMovies([]);
+    setPage(1);
+    setHasMore(true);
+    fetchMovies(searchQuery, 1, 30);
   }, [searchQuery]);
 
-  const filteredMovies = () => {
-    if (activeCategory === "All") return movies;
-    return movies.filter((m) =>
-      m.genre.toLowerCase().includes(activeCategory.toLowerCase())
-    );
-  };
+  // ✅ Infinite scroll logic
+  const handleScroll = useCallback(() => {
+    if (
+      window.innerHeight + document.documentElement.scrollTop + 100 >=
+        document.documentElement.scrollHeight &&
+      !loading &&
+      hasMore
+    ) {
+      setPage((prev) => prev + 1);
+    }
+  }, [loading, hasMore]);
+
+  useEffect(() => {
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, [handleScroll]);
+
+  // ✅ Load more movies when page changes
+  useEffect(() => {
+    if (page === 1) return;
+    fetchMovies(searchQuery || "Batman", page);
+  }, [page]);
+
+  // ✅ Filter movies by category
+  const filteredMovies = movies.filter((m) => {
+    if (activeCategory === "All") return true;
+    return m.genre.toLowerCase().split(", ").includes(activeCategory.toLowerCase());
+  });
 
   return (
-    <div className="min-h-screen">
-      <Header onSearch={setSearchQuery} searchQuery={searchQuery} />
+    <div className="min-h-screen bg-background text-foreground">
+      <Header
+        onSearch={setSearchQuery}
+        searchQuery={searchQuery}
+        onSigninClick={() => {
+          setAuthMode("signin");
+          setShowAuthModal(true);
+        }}
+        onSignupClick={() => {
+          setAuthMode("signup");
+          setShowAuthModal(true);
+        }}
+      />
 
-      <main className="container mx-auto px-4 py-8">
-        {searchQuery ? (
-          <SearchResults
-            query={searchQuery}
-            results={movies}
-            onClear={() => {
-              setSearchQuery("");
-              fetchMovies("Avengers");
-            }}
-            loading={loading}
-            onMovieClick={setSelectedMovie}
-          />
-        ) : (
-          <>
-            {/* Featured */}
-            {movies.length > 0 && (
-              <section className="mb-8">
-                <MovieCard
-                  title={movies[0].title}
-                  genre={movies[0].genre}
-                  rating={movies[0].rating}
-                  year={movies[0].year}
-                  image={movies[0].image}
-                  duration={movies[0].duration}
-                  description="Featured from OMDb search results"
-                  featured={true}
-                  onClick={() => setSelectedMovie(movies[0])}
-                />
-              </section>
-            )}
+      <section className="container mx-auto px-4 py-4">
+        <CategoryTabs
+          categories={categories}
+          activeCategory={activeCategory}
+          onCategoryChange={setActiveCategory}
+        />
+      </section>
 
-            {/* Categories */}
-            <section className="py-4 mb-6">
-              <CategoryTabs
-                categories={categories}
-                activeCategory={activeCategory}
-                onCategoryChange={setActiveCategory}
-              />
-            </section>
+      <main className="container mx-auto px-4 py-4">
+        {error && <p className="text-center text-red-500 font-semibold">{error}</p>}
 
-            {/* Movie Grid */}
-            <MovieGrid
-              title="Discover"
-              movies={filteredMovies()}
-              onMovieClick={setSelectedMovie}
-            />
+        <MovieList
+          movies={filteredMovies}
+          onSelect={(id) => {
+            const movie = movies.find((m) => m.id === id);
+            setSelectedMovie(movie);
+          }}
+        />
 
-            <StatsSection />
-          </>
-        )}
+        {loading && <p className="text-center text-gray-400 mt-4">Loading more...</p>}
+        {!hasMore && <p className="text-center text-gray-400 mt-4">No more movies.</p>}
       </main>
 
-      <footer className="bg-muted/50 mt-16 py-12">
-        <div className="container px-4 mx-auto">
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
-            <div>
-              <div className="flex items-center gap-2 mb-4">
-                <div className="w-8 h-8 bg-red-600 rounded-md flex items-center justify-center">
-                  <span className="text-white font-bold">M</span>
-                </div>
-                <span className="font-bold text-xl">MovieStream</span>
-              </div>
-              <p className="text-muted-foreground">Your ultimate destination for movies and TV shows.</p>
-            </div>
-            <div>
-              <h4 className="font-semibold mb-4">Browse</h4>
-              <ul className="space-y-2 text-muted-foreground">
-                <li><a href="#" className="hover:text-primary">Movies</a></li>
-                <li><a href="#" className="hover:text-primary">TV Shows</a></li>
-                <li><a href="#" className="hover:text-primary">Genres</a></li>
-                <li><a href="#" className="hover:text-primary">Top Rated</a></li>
-              </ul>
-            </div>
-            <div>
-              <h4 className="font-semibold mb-4">Account</h4>
-              <ul className="space-y-2 text-muted-foreground">
-                <li><a href="#" className="hover:text-primary">My List</a></li>
-                <li><a href="#" className="hover:text-primary">Watchlist</a></li>
-                <li><a href="#" className="hover:text-primary">Settings</a></li>
-                <li><a href="#" className="hover:text-primary">Help</a></li>
-              </ul>
-            </div>
-            <div>
-              <h4 className="font-semibold mb-4">Legal</h4>
-              <ul className="space-y-2 text-muted-foreground">
-                <li><a href="#" className="hover:text-primary">Privacy Policy</a></li>
-                <li><a href="#" className="hover:text-primary">Terms of Service</a></li>
-                <li><a href="#" className="hover:text-primary">Cookie Policy</a></li>
-                <li><a href="#" className="hover:text-primary">Contact Us</a></li>
-              </ul>
-            </div>
-          </div>
+      {selectedMovie && (
+        <MovieDetails
+          movie={selectedMovie}
+          isOpen={!!selectedMovie}
+          onClose={() => setSelectedMovie(null)}
+        />
+      )}
 
-          <div className="border-t mt-8 pt-8 text-center text-muted-foreground">
-            <p>&copy; 2024 MovieStream. All rights reserved.</p>
-          </div>
-        </div>
+      {showAuthModal && (
+        <AuthModal
+          isSignup={authMode === "signup"}
+          onClose={() => setShowAuthModal(false)}
+          toggleMode={() =>
+            setAuthMode((prev) => (prev === "signup" ? "signin" : "signup"))
+          }
+        />
+      )}
+ {/* ✅ Footer */}
+      <footer className="bg-muted/40 py-4 text-center text-sm text-gray-500 mt-auto">
+        © 2025 Movie Database. All rights reserved.
       </footer>
 
-      <MovieDetails
-        movie={selectedMovie}
-        isOpen={!!selectedMovie}
-        onClose={() => setSelectedMovie(null)}
-      />
+
     </div>
   );
 }
