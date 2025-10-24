@@ -1,45 +1,45 @@
-export default function SearchResults({
-  query,
-  results = [],
-  onClear,
-  loading,
-  onMovieClick,
-}) {
+export default function SearchResults({ query, results, loading, onSelect, onClear }) {
+  if (!query) return null; // Only show when user types
+
   return (
-    <section>
-      <div className="flex items-center justify-between mb-4">
-        <h2 className="text-xl font-semibold">
-          Results for <span className="text-blue-600">{query}</span>
-        </h2>
+    <div className="mt-4 bg-gray-800 p-4 rounded-md shadow-lg max-w-xl mx-auto">
+      <div className="flex justify-between items-center mb-2">
+        <h3 className="font-bold text-white">Search results for "{query}"</h3>
         <button
           onClick={onClear}
-          className="text-sm text-red-500 hover:underline"
+          className="text-red-400 hover:text-red-600 text-sm"
         >
           Clear
         </button>
       </div>
 
       {loading ? (
-        <p>Loading...</p>
-      ) : results.length > 0 ? (
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
-          {results.map((movie) => (
+        <p className="text-gray-400">Loading...</p>
+      ) : results.length === 0 ? (
+        <p className="text-gray-400">No movies found.</p>
+      ) : (
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+          {results.map((m) => (
             <div
-              key={movie.imdbID}
-              onClick={() => onMovieClick(movie)}
-              className="cursor-pointer"
+              key={m.id}
+              onClick={() => onSelect(m.id)}
+              className="bg-white rounded-md overflow-hidden cursor-pointer hover:shadow-lg transition"
             >
-              <img src={movie.Poster} alt={movie.Title} className="rounded" />
-              <h3 className="mt-2 text-center">{movie.Title}</h3>
+              <img
+                src={m.image || "https://via.placeholder.com/300x450?text=No+Image"}
+                alt={m.title}
+                className="w-full h-48 object-cover"
+              />
+              <div className="p-2">
+                <h4 className="font-bold text-sm">{m.title}</h4>
+                <p className="text-gray-500 text-xs">{m.year}</p>
+              </div>
             </div>
           ))}
         </div>
-      ) : (
-        <p>No results found.</p>
       )}
-    </section>
+    </div>
   );
 }
-
 
 
