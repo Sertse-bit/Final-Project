@@ -1,4 +1,5 @@
 
+
 export default function CategoryTabs({ categories = [], activeCategory, onCategoryChange }) {
   return (
     <div className="flex gap-3 overflow-x-auto pb-2">
