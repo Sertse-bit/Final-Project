@@ -1,4 +1,3 @@
-
 export default function MovieCard({
   title,
   genre,
@@ -34,4 +33,3 @@ export default function MovieCard({
     </div>
   );
 }
-
