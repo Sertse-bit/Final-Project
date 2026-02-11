@@ -1,4 +1,8 @@
+ codex/explain-codebase-structure-and-pointers-oshftv
 const API_KEY = import.meta.env.VITE_OMDB_API_KEY || "a4a729c8";
+
+const API_KEY = import.meta.env.VITE_OMDB_API_KEY;
+ main
 const BASE_URL = "https://www.omdbapi.com/";
 
 // ✅ Fetch movies by search term

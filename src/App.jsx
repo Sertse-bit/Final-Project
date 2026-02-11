@@ -8,7 +8,11 @@ import SpotlightBanner from "./components/SpotlightBanner";
 import AIAssistant from "./components/AIAssistant";
 import { fetchSpotlight } from "./api/backend";
 
+codex/explain-codebase-structure-and-pointers-oshftv
 const API_KEY = import.meta.env.VITE_OMDB_API_KEY || "a4a729c8";
+
+const API_KEY = import.meta.env.VITE_OMDB_API_KEY;
+ main
 
 export default function App() {
   const [searchQuery, setSearchQuery] = useState("");
@@ -32,6 +36,12 @@ export default function App() {
     if (!hasMore && pageNum > 1) return;
     setLoading(true);
     setError("");
+
+    if (!API_KEY) {
+      setError("Missing OMDB API key. Set VITE_OMDB_API_KEY in your environment.");
+      setLoading(false);
+      return;
+    }
 
     try {
       const searchRes = await fetch(
