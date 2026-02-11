@@ -1,31 +1,51 @@
 🎬 Movie Database App
 
-A React-based movie database app to search, browse, and view detailed movie information using the OMDB API.
+A Vite + React movie database app to search, browse, and view detailed movie information using the OMDb API.
 
-🌟 Features
+## 🌟 Features
 
-🎥 Browse movies by categories (Action, Comedy, Sci-Fi, Romance, Horror, Drama, Adventure)
-🔍 Search for movies by title with live results
-🎞️ View detailed movie information (title, year, genre, rating, duration, plot)
-🖼 Placeholder images for movies without posters
-⚡ Infinite scroll / pagination to load more movies
-📱 Fully responsive design
-🔐 Signup/Login modal for future personalization
+- 🎥 Browse movies by categories (Action, Comedy, Sci-Fi, Romance, Horror, Drama, Adventure)
+- 🔍 Search movies by title
+- 🎞️ View movie details (title, year, genre, rating, runtime, plot)
+- 🖼️ Fallback image when posters are missing
+- ⚡ Infinite scroll / pagination
+- 📱 Responsive layout
+- 🔐 Sign in / sign up modal UI (frontend-only placeholder)
 
-🛠️ Technologies Used
+## 🛠️ Tech Stack
 
-Frontend
+- React 18
+- Vite 5
+- Tailwind CSS
+- Lucide React icons
 
-React.js (Vite)
+## 🚀 Getting Started
 
-Tailwind CSS
+### 1) Install dependencies
 
-React Icons
+```bash
+npm install
+```
 
-React Router
+### 2) Configure environment variables
 
-Zustand for state management
+Create a `.env` file in the project root:
 
-Backend / APIs
+```bash
+VITE_OMDB_API_KEY=your_api_key_here
+```
 
-OMDB API (for movie data)
+> You can get an API key from https://www.omdbapi.com/apikey.aspx.
+
+### 3) Start development server
+
+```bash
+npm run dev
+```
+
+### Other scripts
+
+```bash
+npm run build
+npm run preview
+```
