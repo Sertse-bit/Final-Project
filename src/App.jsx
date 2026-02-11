@@ -5,7 +5,7 @@ import CategoryTabs from "./components/CategoryTabs";
 import MovieDetails from "./components/MovieDetails";
 import AuthModal from "./components/AuthModal";
 
-const API_KEY = "368be984";
+const API_KEY = import.meta.env.VITE_OMDB_API_KEY;
 
 export default function App() {
   const [searchQuery, setSearchQuery] = useState("");
@@ -27,6 +27,12 @@ export default function App() {
     if (!hasMore && pageNum > 1) return;
     setLoading(true);
     setError("");
+
+    if (!API_KEY) {
+      setError("Missing OMDB API key. Set VITE_OMDB_API_KEY in your environment.");
+      setLoading(false);
+      return;
+    }
 
     try {
       const searchRes = await fetch(
