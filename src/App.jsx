@@ -8,7 +8,7 @@ import SpotlightBanner from "./components/SpotlightBanner";
 import AIAssistant from "./components/AIAssistant";
 import { fetchSpotlight } from "./api/backend";
 
-const API_KEY = import.meta.env.VITE_OMDB_API_KEY || "368be984";
+const API_KEY = import.meta.env.VITE_OMDB_API_KEY || "a4a729c8";
 
 export default function App() {
   const [searchQuery, setSearchQuery] = useState("");
