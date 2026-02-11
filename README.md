@@ -1,10 +1,13 @@
 🎬 Movie Database App
 
+codex/explain-codebase-structure-and-pointers-d444u6
 A Vite + React movie database app with a lightweight Node backend for dynamic movie features and an AI-style movie assistant.
+A Vite + React movie database app to search, browse, and view detailed movie information using the OMDb AP main
 
 ## 🌟 Features
 
 - 🎥 Browse movies by categories (Action, Comedy, Sci-Fi, Romance, Horror, Drama, Adventure)
+ codex/explain-codebase-structure-and-pointers-d444u6
 - 🔍 Search movies by title from OMDb
 - 🎞️ View movie details (title, year, genre, rating, runtime, plot)
 - ⚡ Infinite scroll / pagination
@@ -54,11 +57,46 @@ npm run backend
 ```
 
 ### 4) Run frontend (terminal 2)
+- 🔍 Search movies by title
+- 🎞️ View movie details (title, year, genre, rating, runtime, plot)
+- 🖼️ Fallback image when posters are missing
+- ⚡ Infinite scroll / pagination
+- 📱 Responsive layout
+- 🔐 Sign in / sign up modal UI (frontend-only placeholder)
+
+## 🛠️ Tech Stack
+
+- React 18
+- Vite 5
+- Tailwind CSS
+- Lucide React icons
+
+## 🚀 Getting Started
+
+### 1) Install dependencies
+
+```bash
+npm install
+```
+
+### 2) Configure environment variables
+
+Create a `.env` file in the project root:
+
+```bash
+VITE_OMDB_API_KEY=your_api_key_here
+```
+
+> You can get an API key from https://www.omdbapi.com/apikey.aspx.
+
+### 3) Start development server
+ main
 
 ```bash
 npm run dev
 ```
 
+ codex/explain-codebase-structure-and-pointers-d444u6
 ### 5) Open the app
 
 - Frontend: `http://localhost:5173`
@@ -73,6 +111,8 @@ npm run dev
 - **Real-time watch**: inside movie details, click **Watch Now** and verify the video player starts.
 - **Infinite scroll**: scroll to load more movies.
 
+
+main
 ### Other scripts
 
 ```bash
