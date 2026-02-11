@@ -10,6 +10,7 @@ A Vite + React movie database app with a lightweight Node backend for dynamic mo
 - ⚡ Infinite scroll / pagination
 - ✨ Dynamic spotlight banner from backend
 - 🤖 AI Movie Assistant chat panel powered by backend agent endpoint
+- ▶️ Real-time watch in movie details (click **Watch Now** to play video)
 - 📱 Responsive layout
 
 ## 🧱 Architecture
@@ -69,6 +70,7 @@ npm run dev
 - **Dynamic spotlight**: top banner shows “Dynamic Spotlight” and changes by category.
 - **AI assistant**: ask for recommendations (for example: “Suggest a horror movie night”).
 - **Movie details**: click a movie card and confirm modal content.
+- **Real-time watch**: inside movie details, click **Watch Now** and verify the video player starts.
 - **Infinite scroll**: scroll to load more movies.
 
 ### Other scripts
