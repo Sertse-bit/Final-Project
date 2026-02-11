@@ -4,8 +4,11 @@ import MovieList from "./components/MovieList";
 import CategoryTabs from "./components/CategoryTabs";
 import MovieDetails from "./components/MovieDetails";
 import AuthModal from "./components/AuthModal";
+import SpotlightBanner from "./components/SpotlightBanner";
+import AIAssistant from "./components/AIAssistant";
+import { fetchSpotlight } from "./api/backend";
 
-const API_KEY = "368be984";
+const API_KEY = import.meta.env.VITE_OMDB_API_KEY || "368be984";
 
 export default function App() {
   const [searchQuery, setSearchQuery] = useState("");
@@ -18,6 +21,8 @@ export default function App() {
   const [authMode, setAuthMode] = useState("signin");
   const [page, setPage] = useState(1);
   const [hasMore, setHasMore] = useState(true);
+  const [spotlightData, setSpotlightData] = useState(null);
+  const [spotlightLoading, setSpotlightLoading] = useState(true);
 
   // ✅ Categories (used for both tabs and random homepage load)
   const categories = ["All", "Action", "Drama", "Comedy", "Sci-Fi", "Horror", "Romance", "Adventure"];
@@ -90,6 +95,30 @@ export default function App() {
     fetchMovies(searchQuery, 1, 30);
   }, [searchQuery]);
 
+
+  // ✅ Dynamic spotlight from backend
+  useEffect(() => {
+    let mounted = true;
+
+    const loadSpotlight = async () => {
+      try {
+        setSpotlightLoading(true);
+        const data = await fetchSpotlight(activeCategory);
+        if (mounted) setSpotlightData(data);
+      } catch (error) {
+        console.error("Failed to load dynamic spotlight:", error);
+      } finally {
+        if (mounted) setSpotlightLoading(false);
+      }
+    };
+
+    loadSpotlight();
+
+    return () => {
+      mounted = false;
+    };
+  }, [activeCategory]);
+
   // ✅ Infinite scroll logic
   const handleScroll = useCallback(() => {
     if (
@@ -142,6 +171,8 @@ export default function App() {
         />
       </section>
 
+      <SpotlightBanner spotlightData={spotlightData} loading={spotlightLoading} />
+
       <main className="container mx-auto px-4 py-4">
         {error && <p className="text-center text-red-500 font-semibold">{error}</p>}
 
@@ -164,6 +195,8 @@ export default function App() {
           onClose={() => setSelectedMovie(null)}
         />
       )}
+
+      <AIAssistant movies={filteredMovies} />
 
       {showAuthModal && (
         <AuthModal
