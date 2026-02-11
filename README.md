@@ -1,16 +1,25 @@
 🎬 Movie Database App
 
-A Vite + React movie database app to search, browse, and view detailed movie information using the OMDb API.
+A Vite + React movie database app with a lightweight Node backend for dynamic movie features and an AI-style movie assistant.
 
 ## 🌟 Features
 
 - 🎥 Browse movies by categories (Action, Comedy, Sci-Fi, Romance, Horror, Drama, Adventure)
-- 🔍 Search movies by title
+- 🔍 Search movies by title from OMDb
 - 🎞️ View movie details (title, year, genre, rating, runtime, plot)
-- 🖼️ Fallback image when posters are missing
 - ⚡ Infinite scroll / pagination
+- ✨ Dynamic spotlight banner from backend
+- 🤖 AI Movie Assistant chat panel powered by backend agent endpoint
 - 📱 Responsive layout
-- 🔐 Sign in / sign up modal UI (frontend-only placeholder)
+
+## 🧱 Architecture
+
+- **Frontend**: Vite + React + Tailwind (`src/`)
+- **Backend**: Node HTTP server (`backend/server.mjs`) with endpoints:
+  - `GET /api/health`
+  - `GET /api/dynamic/spotlight`
+  - `GET /api/discover`
+  - `POST /api/agent/chat`
 
 ## 🛠️ Tech Stack
 
@@ -18,6 +27,7 @@ A Vite + React movie database app to search, browse, and view detailed movie inf
 - Vite 5
 - Tailwind CSS
 - Lucide React icons
+- Node.js (built-in HTTP backend)
 
 ## 🚀 Getting Started
 
@@ -33,41 +43,33 @@ Create a `.env` file in the project root:
 
 ```bash
 VITE_OMDB_API_KEY=your_api_key_here
+VITE_BACKEND_URL=http://localhost:8787
 ```
 
-> You can get an API key from https://www.omdbapi.com/apikey.aspx.
+### 3) Run backend (terminal 1)
 
-### 3) Start development server
+```bash
+npm run backend
+```
+
+### 4) Run frontend (terminal 2)
 
 ```bash
 npm run dev
 ```
 
-### 4) Open the app
+### 5) Open the app
 
-After running `npm run dev`, open:
-
-- `http://localhost:5173`
-
-To test the production build locally:
-
-```bash
-npm run build
-npm run preview
-```
-
-Then open:
-
-- `http://localhost:4173`
+- Frontend: `http://localhost:5173`
+- Backend health: `http://localhost:8787/api/health`
 
 ## ✅ Where to test (quick checks)
 
-- **Home load:** confirm movies appear on first render.
-- **Search:** type a movie title in the header search bar and verify results update.
-- **Category tabs:** click a category and verify visible cards filter by genre.
-- **Movie details:** click a movie card and verify modal content (year/genre/rating/runtime/plot).
-- **Infinite scroll:** scroll to the bottom and verify more movies load until “No more movies.” appears.
-- **Missing API key path:** remove `VITE_OMDB_API_KEY` and confirm the app shows a helpful setup error.
+- **Home load**: movies render after startup.
+- **Dynamic spotlight**: top banner shows “Dynamic Spotlight” and changes by category.
+- **AI assistant**: ask for recommendations (for example: “Suggest a horror movie night”).
+- **Movie details**: click a movie card and confirm modal content.
+- **Infinite scroll**: scroll to load more movies.
 
 ### Other scripts
 
