@@ -1,13 +1,20 @@
 🎬 Movie Database App
 
+ codex/explain-codebase-structure-and-pointers-oshftv
+A Vite + React movie database app with a lightweight Node backend for dynamic movie features and an AI-style movie assistant.
+=======
 codex/explain-codebase-structure-and-pointers-d444u6
 A Vite + React movie database app with a lightweight Node backend for dynamic movie features and an AI-style movie assistant.
 A Vite + React movie database app to search, browse, and view detailed movie information using the OMDb AP main
+main
 
 ## 🌟 Features
 
 - 🎥 Browse movies by categories (Action, Comedy, Sci-Fi, Romance, Horror, Drama, Adventure)
+ codex/explain-codebase-structure-and-pointers-oshftv
+=======
  codex/explain-codebase-structure-and-pointers-d444u6
+ main
 - 🔍 Search movies by title from OMDb
 - 🎞️ View movie details (title, year, genre, rating, runtime, plot)
 - ⚡ Infinite scroll / pagination
@@ -45,18 +52,27 @@ npm install
 
 Create a `.env` file in the project root:
 
-```bash
+```bash codex/explain-codebase-structure-and-pointers-oshftv
+VITE_OMDB_API_KEY=your_api_key_here   # optional (demo key fallback exists)
+VITE_BACKEND_URL=http://localhost:8787 # optional for non-default backend URL
+```
+
+### 3) Run backend (optional, terminal 1)
+
 VITE_OMDB_API_KEY=your_api_key_here
 VITE_BACKEND_URL=http://localhost:8787
 ```
 
 ### 3) Run backend (terminal 1)
+main
 
 ```bash
 npm run backend
 ```
 
 ### 4) Run frontend (terminal 2)
+ codex/explain-codebase-structure-and-pointers-oshftv
+
 - 🔍 Search movies by title
 - 🎞️ View movie details (title, year, genre, rating, runtime, plot)
 - 🖼️ Fallback image when posters are missing
@@ -87,16 +103,20 @@ Create a `.env` file in the project root:
 VITE_OMDB_API_KEY=your_api_key_here
 ```
 
-> You can get an API key from https://www.omdbapi.com/apikey.aspx.
+ You can get an API key from https://www.omdbapi.com/apikey.aspx.
 
 ### 3) Start development server
  main
+main
 
 ```bash
 npm run dev
 ```
 
+ codex/explain-codebase-structure-and-pointers-oshftv
+
  codex/explain-codebase-structure-and-pointers-d444u6
+ main
 ### 5) Open the app
 
 - Frontend: `http://localhost:5173`
@@ -105,14 +125,22 @@ npm run dev
 ## ✅ Where to test (quick checks)
 
 - **Home load**: movies render after startup.
+codex/explain-codebase-structure-and-pointers-oshftv
+- **Dynamic spotlight**: top banner shows “Dynamic Spotlight” and changes by category (falls back locally if backend is unavailable).
+- **AI assistant**: ask for recommendations (for example: “Suggest a horror movie night”). Works in offline fallback mode if backend is down.
+
 - **Dynamic spotlight**: top banner shows “Dynamic Spotlight” and changes by category.
 - **AI assistant**: ask for recommendations (for example: “Suggest a horror movie night”).
+ main
 - **Movie details**: click a movie card and confirm modal content.
 - **Real-time watch**: inside movie details, click **Watch Now** and verify the video player starts.
 - **Infinite scroll**: scroll to load more movies.
 
+ codex/explain-codebase-structure-and-pointers-oshftv
+
 
 main
+ main
 ### Other scripts
 
 ```bash
